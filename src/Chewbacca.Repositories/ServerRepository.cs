@@ -1,4 +1,5 @@
-﻿using Chewbacca.Core;
+﻿using System.Text;
+using Chewbacca.Core;
 using MySql.Data.MySqlClient;
 
 namespace Chewbacca.Repositories;
@@ -7,38 +8,58 @@ public class ServerRepository : IServerRepository
 {
     private readonly ChewbaccaDbContext _context;
 
-    public ServerRepository()
+    public ServerRepository(ChewbaccaDbContext context)
     {
-        _context = new ChewbaccaDbContext();
+        _context = context;
     }
 
-    public IList<Server> GetAllServers()
+    public IEnumerable<Server> GetAll()
     {
-        var servers = new List<Server>();
         using var conn = _context.GetConnection();
         conn.Open();
         var command = new MySqlCommand("SELECT * FROM servers", conn);
         using var reader = command.ExecuteReader();
         while (reader.Read())
-        {
-            servers.Add(new Server()
+            yield return new Server()
             {
-                Id = reader.GetInt32("Id"),
-                IPAddress = reader.GetString("IPAddress"),
-                Price = reader.GetDecimal("Price"),
-                HostName = reader.GetString("HostName"),
-                IsActive = reader.GetBoolean("IsActive"),
-                NodeName = reader.GetString("NodeName"),
-                RootPassword = reader.GetString("RootPassword"),
-                NextBillingDate = reader.GetDateTime("NextBillingDate")
-            });
-        }
-
-        return servers;
+                Id = reader.GetInt32(nameof(Server.Id)),
+                IPAddress = reader.GetString(nameof(Server.IPAddress)),
+                Price = reader.GetDecimal(nameof(Server.Price)),
+                HostName = reader.GetString(nameof(Server.HostName)),
+                IsActive = reader.GetBoolean(nameof(Server.IsActive)),
+                NodeName = reader.GetString(nameof(Server.NodeName)),
+                RootPassword = reader.GetString(nameof(Server.RootPassword)),
+                NextBillingDate = reader.GetDateTime(nameof(Server.NextBillingDate))
+            };
     }
 
-    public Server AddServer(Server server)
+    public void AddEntity(Server server)
     {
-        return server;
+        var command = new MySqlCommand();
+        using var conn = _context.GetConnection();
+        conn.Open();
+        command.Connection = conn;
+        command.CommandText =
+            $"INSERT INTO servers(IPAddress,Price,HostName,NodeName,RootPassword,NextBillingDate) VALUES ('{server.IPAddress}',{server.Price},'{server.HostName}','{server.NodeName}','{server.RootPassword}','2023-04-23')";
+        command.ExecuteNonQuery();
+    }
+
+    public void EditEntity(Server server)
+    {
+        var savedEntity = GetEntity(server.Id);
+        var command = new StringBuilder("UPDATE servers SET");
+        if(savedEntity.IPAddress!=server.IPAddress)
+            command.Append("")
+            
+    }
+
+    public void DeleteEntity(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Server GetEntity(int id)
+    {
+        throw new NotImplementedException();
     }
 }

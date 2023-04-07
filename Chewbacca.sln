@@ -17,6 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chewbacca.MVC", "src\Chewba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chewbacca.Tests", "test\Chewbacca.Tests\Chewbacca.Tests.csproj", "{2C5324DE-A3AB-436F-A0D2-36659FA98D2F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{4E8A392F-B75A-46DE-8840-C91F4E71E136}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
